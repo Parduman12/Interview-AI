@@ -1,0 +1,81 @@
+@use '../../styles/button.scss';
+
+main {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, rgb(28, 33, 49) 0%, rgb(17, 17, 17) 100%);
+    padding: 1.5rem;
+} 
+
+.form-container {
+    background: rgba(24, 28, 39, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    width: min(440px, 100%);
+    padding: 2.5rem 2.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #f8fafc;
+        margin-bottom: 0.25rem;
+        text-align: center;
+    }
+
+    p {
+        color: #9aa4b8;
+        font-size: 0.95rem;
+        text-align: center;
+        margin-top: 0.5rem;
+    }
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+
+input {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    outline: none;
+    padding-inline: 1.2rem;
+    padding-block: 0.9rem;
+    font-size: 1rem;
+    color: #f8fafc;
+    border-radius: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+
+    &::placeholder {
+        color: #64748b;
+    }
+
+    &:focus {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(79, 125, 255, 0.7);
+        box-shadow: 0 0 0 4px rgba(79, 125, 255, 0.15);
+    }
+}
+
+.Link {
+    color: #4f7dff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: #76a0ff;
+        text-decoration: underline;
+    }
+}
