@@ -9,43 +9,48 @@ import blacklistTokens from "../models/blacklist.model.js";
  * @description register a new user, expects username, email, password in the request
  * @access Public
  */
-export const registerUser = async(req, res)=>{
-    const {username, email, password} = req.body;
-    if(!username || !email || !password){
+export const registerUser = async (req, res) => {
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
         return res.status(400).send({
-            message:"Please enter all the details"
+            message: "Please enter all the details"
         })
     }
     const isUserAlreadyExists = await Users.findOne({
-        $or: [{username}, {email}]
+        $or: [{ username }, { email }]
     })
-    if(isUserAlreadyExists){
+    if (isUserAlreadyExists) {
         return res.status(400).send({
-            message:"Account with this email address or username already exists"
+            message: "Account with this email address or username already exists"
         })
     }
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await Users.create({
-        username:username,
-        email: email, 
+        username: username,
+        email: email,
         password: hashedPassword
     })
 
     const token = jwt.sign({
         id: user._id,
         username: user.username,
-    }, process.env.JWT_SECRET, {expiresIn: "1d"});
-    res.cookie("token", token)
+    }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+        maxAge: 24 * 60 * 60 * 1000
+    })
     res.status(201).send({
         message: "User registered successfully",
-        user:{
+        user: {
             userId: user._id,
             username: user.username,
             email: user.email
         }
     })
-    
+
 }
 
 
@@ -55,45 +60,54 @@ export const registerUser = async(req, res)=>{
  * @access Public
  */
 
-export const loginUser = async(req, res)=>{
-    const {email, password} = req.body;
-    const user = await Users.findOne({email});
-    if(!user){
+export const loginUser = async (req, res) => {
+    const { email, password } = req.body;
+    const user = await Users.findOne({ email });
+    if (!user) {
         return res.status(400).send({
             message: "Invalid email or password"
         })
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if(!isPasswordValid){
+    if (!isPasswordValid) {
         return res.status(400).send({
-            message:"Invalid password"
+            message: "Invalid password"
         })
     }
     const token = jwt.sign({
         id: user._id,
         username: user.username,
         email: user.email
-     },process.env.JWT_SECRET, {expiresIn:"1d"});
+    }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
-     res.cookie("token", token);
-     res.status(200).json({
-        message:"User logged in successfully",
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+        maxAge: 24 * 60 * 60 * 1000
+    })
+    res.status(200).json({
+        message: "User logged in successfully",
         user: {
             userId: user._id,
             username: user.username,
             email: user.email
         }
-     })
-    
+    })
+
 }
 
 //logout
-export const logoutUser = async (req, res)=>{
+export const logoutUser = async (req, res) => {
     const token = req.cookies.token;
-    if(token){
-        await blacklistTokens.create({token});
+    if (token) {
+        await blacklistTokens.create({ token });
     }
-    res.clearCookie("token")
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+    })
     res.status(200).json({
         message: "Logged out successfully"
     });
@@ -102,11 +116,11 @@ export const logoutUser = async (req, res)=>{
 
 
 //getme
-export const getMe = async(req, res)=>{
+export const getMe = async (req, res) => {
     const user = await Users.findById(req.user.id);
     res.status(200).json({
-        message:"User details fetched successfully.",
-        user:{
+        message: "User details fetched successfully.",
+        user: {
             id: user._id,
             username: user.username,
             email: user.email
