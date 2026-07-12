@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const register = async({username, email, password})=>{
-    const url = "http://localhost:3000/api/auth/register";
+    const url = `${process.env.BACKEND_URL}/api/auth/register`;
     console.log(url);
     try {
         const response = await axios.post(url,{
@@ -17,7 +17,7 @@ export const register = async({username, email, password})=>{
 
 
 export const login = async ({email, password})=>{
-    const url = "http://localhost:3000/api/auth/login";
+    const url = `${process.env.BACKEND_URL}/api/auth/login`;
     console.log(url);
     try {
         const response = await axios.post(url,{
@@ -32,7 +32,7 @@ export const login = async ({email, password})=>{
 }
 
 export const logout = async()=>{
-    const url = "http://localhost:3000/api/auth/logout"
+    const url = `${process.env.BACKEND_URL}/api/auth/logout`;
     try {
         const response = await axios.get(url,
             {
@@ -47,7 +47,7 @@ export const logout = async()=>{
 
 
 export const getMe = async ()=>{
-    const url = "http://localhost:3000/api/auth/get-me";
+    const url = `${process.env.BACKEND_URL}/api/auth/get-me`;
     try {
         const response = await axios.get(url, {
             withCredentials:true
